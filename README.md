@@ -5,7 +5,7 @@ my port of Id Software's DOOM
 
 i wrote a blog post about this http://antongerdelan.net/blog/?post=2014_09_24
 
-i replaced the non-working fullscreen palette-based X video output with an RGBA
+i replaced the non-working fullscreen palette-based X video output with a raw RGB
 colour video output using OpenGL shaders and use the GLFW and GLEW libraries to
 add multi-platform support (windows/apple/linux desktops anyway)
 
