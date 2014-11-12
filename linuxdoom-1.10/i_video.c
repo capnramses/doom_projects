@@ -79,8 +79,8 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 	GLuint quad_tex;
 	unsigned char image_data[320 * 200];
 	unsigned char corrected[320 * 200 * 3];
-	int g_gl_width = 1600;
-	int g_gl_height = 1000;
+	int g_gl_width = 800;
+	int g_gl_height = 500;
 	int g_fullscreen;
 	#endif
 	
@@ -1098,9 +1098,25 @@ void I_InitGraphics(void)
 		const GLubyte* version;
 		int pa;
 		
+		pa = M_CheckParm ("-help");
+		if (pa > 0) {
+			printf (
+				"\nAnton's DOOM port\n"
+				"-help\t\t\tthis\n"
+				"-fs\t\t\tfull-screen\n"
+				"-res WIDTH HEIGHT\tspecify resolution. default 800x500\n"
+			);
+			exit (0);
+		}
 		pa = M_CheckParm ("-fs");
-		if (pa) {
+		if (pa > 0) {
 			g_fullscreen = 1;
+		}
+		pa = M_CheckParm ("-res");
+		if (pa > 0) {
+			g_gl_width = atoi (myargv[pa + 1]);
+			g_gl_height = atoi (myargv[pa + 2]);
+			printf ("resolution specified %iX%i\n", g_gl_width, g_gl_height);
 		}
 		
 
@@ -1171,33 +1187,48 @@ void I_InitGraphics(void)
 		glVertexAttribPointer (0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 		
 		const char* vs_str =
-		"#version 400\n"
-		"in vec2 vp;"
-		"out vec2 st;"
+		"#version 120\n"
+		"attribute vec2 vp;"
+		"varying vec2 st;"
 		"void main() {"
 		"  gl_Position = vec4 (vp, 0.0, 1.0);"
 		"  st = vp * 0.5 + 0.5;"
 		"  st.t = 1.0 - st.t;"
 		"}";
 		const char* fs_str =
-		"#version 400\n"
-		"in vec2 st;"
+		"#version 120\n"
+		"varying vec2 st;"
 		"uniform sampler2D qt;"
-		"out vec4 frag_colour;"
 		"void main() {"
-		"  frag_colour = vec4 (0.0, 0.0, 0.0, 1.0);"
-		"  frag_colour.rgb = texture (qt, st).rgb;"
+		"  gl_FragColor = vec4 (0.0, 0.0, 0.0, 1.0);"
+		"  gl_FragColor.rgb = texture2D (qt, st).rgb;"
 		"}";
+		int params = -1;
 		GLuint vs = glCreateShader (GL_VERTEX_SHADER);
 		GLuint fs = glCreateShader (GL_FRAGMENT_SHADER);
 		glShaderSource (vs, 1, &vs_str, NULL);
 		glShaderSource (fs, 1, &fs_str, NULL);
 		glCompileShader (vs);
+		glGetShaderiv (vs, GL_COMPILE_STATUS, &params);
+		if (GL_TRUE != params) {
+			fprintf (stderr, "ERROR compiling vertex shader\n");
+			exit (1);
+		}
 		glCompileShader (fs);
+		glGetShaderiv (fs, GL_COMPILE_STATUS, &params);
+		if (GL_TRUE != params) {
+			fprintf (stderr, "ERROR compiling fragment shader\n");
+			exit (1);
+		}
 		quad_sp = glCreateProgram ();
 		glAttachShader (quad_sp, vs);
 		glAttachShader (quad_sp, fs);
 		glLinkProgram (quad_sp);
+		glGetProgramiv (quad_sp, GL_LINK_STATUS, &params);
+		if (GL_TRUE != params) {
+			fprintf (stderr, "ERROR linking shader\n");
+			exit (1);
+		}
 		
 		// output texture
 		glGenTextures (1, &quad_tex);
