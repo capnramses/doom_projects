@@ -82,6 +82,7 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 	int g_gl_width = 800;
 	int g_gl_height = 500;
 	int g_fullscreen;
+	int g_antialiasing;
 	#endif
 	
 	char p_red[256];
@@ -1105,12 +1106,17 @@ void I_InitGraphics(void)
 				"-help\t\t\tthis\n"
 				"-fs\t\t\tfull-screen\n"
 				"-res WIDTH HEIGHT\tspecify resolution. default 800x500\n"
+				"-aa\t\t\tenables post-process anti-aliasing\n"
 			);
 			exit (0);
 		}
 		pa = M_CheckParm ("-fs");
 		if (pa > 0) {
 			g_fullscreen = 1;
+		}
+		pa = M_CheckParm ("-aa");
+		if (pa > 0) {
+			g_antialiasing = 1;
 		}
 		pa = M_CheckParm ("-res");
 		if (pa > 0) {
@@ -1248,9 +1254,13 @@ void I_InitGraphics(void)
 		glGenerateMipmap (GL_TEXTURE_2D);
 		glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		
+		if (!g_antialiasing) {
+			glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		} else {
+			glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		}
 	#endif
 #else
     // open the display

@@ -3,3 +3,4 @@
 * reverted shaders from GLSL 4.0.0 to GLSL 1.2.0 for broader support
 * added "-res W H" command line param
 * added "-help" command line param
+* added "-aa" flag to enable anti-aliasing (only on framebuffer)
