@@ -73,7 +73,10 @@ int main( int argc, char** argv ) {
 	// stored so you gotta know it - Doom songs are all 140Hz
 	{ // extract music files based on D_... prefix in name
 		for ( int i = 0; i < dir_nentries; i++ ) {
-			if ( lumps[i].name[0] == 'D' && lumps[i].name[1] == '_' ) {
+			// DOOM has D_E1M1 etc, HERETIC has MUS_...
+			if ( ( lumps[i].name[0] == 'D' && lumps[i].name[1] == '_' ) ||
+				( lumps[i].name[0] == 'M' && lumps[i].name[1] == 'U' &&
+					lumps[i].name[2] == 'S' && lumps[i].name[3] == '_' ) ) {
 				printf( "extracting music track '%s'...\n", lumps[i].name );
 				int ret = fseek( f, (long)lumps[i].location, SEEK_SET );	
 				assert( ret != -1 );
