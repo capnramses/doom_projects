@@ -376,8 +376,8 @@ int main( int argc, char **argv ) {
 					assert( ritems == 1 );
 					ritems = fread( &top_offset, sz, 1, f );
 					assert( ritems == 1 );
-					printf("%s w:%i h:%i lo:%i to:%i\n", lumps[dir_idx].name, width,
-					 height, left_offset, top_offset);
+					printf( "%s w:%i h:%i lo:%i to:%i\n", lumps[dir_idx].name, width, height,
+									left_offset, top_offset );
 				}
 				byte_t *pix_buff = (byte_t *)calloc( 4 * width * height, 1 );
 				assert( pix_buff );
@@ -394,17 +394,17 @@ int main( int argc, char **argv ) {
 				for ( int col_idx = 0; col_idx < width; col_idx++ ) {
 					int ptr = column_offsets[col_idx];
 					int lump_location = lumps[dir_idx].location;
-					int ret = fseek( f, (long)(ptr + lump_location), SEEK_SET );
+					int ret = fseek( f, (long)( ptr + lump_location ), SEEK_SET );
 					assert( ret != -1 );
 
 					// row start being non-zero allows columns to be drawn skipping
 					// transparent bits at the top
 					while ( true ) {
 						byte_t row_start = 0;
-						//printf("%s\n", lumps[dir_idx].name);
+						// printf("%s\n", lumps[dir_idx].name);
 						size_t ritems = fread( &row_start, 1, 1, f );
 						assert( ritems == 1 );
-						if (row_start == 255) {
+						if ( row_start == 255 ) {
 							break;
 						}
 
@@ -425,8 +425,8 @@ int main( int argc, char **argv ) {
 							int y = (int)row_start + post_idx;
 							int pb_idx = width * y + x;
 
-							if (npixels_down > height) {
-								printf("npixels_down %i height %i\n", npixels_down, height);
+							if ( npixels_down > height ) {
+								printf( "npixels_down %i height %i\n", npixels_down, height );
 								assert( 0 );
 							}
 
@@ -438,7 +438,7 @@ int main( int argc, char **argv ) {
 						ritems = fread( &dead_byte, 1, 1, f );
 						assert( ritems == 1 );
 					} // endwhile rowstart
-				} //endfor across columns
+				}		// endfor across columns
 
 				// write image file
 				char fname[1024];
