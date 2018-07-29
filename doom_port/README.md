@@ -13,7 +13,7 @@ at the moment it runs on 32-bit and 64-bit linux machines, but should be pretty
 easy to port to windows and apple, i just need to create Makefiles - required
 libs are here already
 
-#what i haven't done yet#
+# what i haven't done yet #
 
 * Finish the keyboard controls
 * Recreate the sound system in a multi-platform way (OpenAL might be okay -
